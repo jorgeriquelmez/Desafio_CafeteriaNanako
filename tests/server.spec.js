@@ -1,18 +1,12 @@
 const request = require('supertest')
-// Importa la aplicación Express.
-// CAMBIO: 'server' ahora debería ser la instancia del servidor HTTP
-// si tu index.js exporta 'module.exports = app.listen(...)'.
 const server = require('../index')
 
 describe('Operaciones CRUD de cafes', () => {
-  // AHORA ESTE afterAll DEBERÍA FUNCIONAR CORRECTAMENTE
   afterAll(async () => {
-    // Asegúrate de que 'server' sea la instancia del servidor HTTP que devuelve app.listen()
-    // y que tenga un método .close().
     if (server && typeof server.close === 'function') {
-      console.log('Cerrando el servidor de pruebas...') // Opcional: para ver que se ejecuta
-      await server.close() // Llama al método .close() de la instancia del servidor
-      console.log('Servidor de pruebas cerrado.') // Opcional: para ver que se cierra
+      console.log('Cerrando el servidor de pruebas...')
+      await server.close()
+      console.log('Servidor de pruebas cerrado.')
     } else {
       console.warn(
         'Advertencia: El objeto "server" no tiene un método .close() o no es una instancia de servidor HTTP.'
@@ -72,9 +66,6 @@ describe('Operaciones CRUD de cafes', () => {
     let updatedCafePayload
 
     beforeEach(async () => {
-      // NOTA: Debido a que 'cafes' es un arreglo global en index.js y no podemos resetearlo,
-      // esta prueba asume que el ID '1' existe y es modificable.
-      // En un escenario real, crearías un café para la prueba o mockearías el estado.
       existingCafeId = '1'
       updatedCafePayload = {
         id: existingCafeId,
@@ -83,7 +74,7 @@ describe('Operaciones CRUD de cafes', () => {
     })
 
     it('debería retornar 400 si el id en los parámetros es diferente al id en el payload', async () => {
-      const paramId = '999' // ID en los parámetros (diferente al payload.id)
+      const paramId = '999'
       const response = await request(server)
         .put(`/cafes/${paramId}`)
         .send(updatedCafePayload)
